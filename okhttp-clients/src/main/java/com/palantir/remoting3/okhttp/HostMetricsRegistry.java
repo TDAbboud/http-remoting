@@ -42,22 +42,24 @@ final class HostMetricsRegistry {
                 .build(new CacheLoader<ServiceAndHost, DefaultHostMetrics>() {
                     @Override
                     public DefaultHostMetrics load(ServiceAndHost key) {
-                        return new DefaultHostMetrics(key.serviceName(), key.hostname(), Clock.systemUTC());
+                        return new DefaultHostMetrics(
+                                key.serviceName(), key.serviceId(), key.hostname(), Clock.systemUTC());
                     }
                 });
     }
 
-    void record(String serviceName, String hostname, int statusCode, long micros) {
+    void record(String serviceName, String serviceId, String hostname, int statusCode, long micros) {
         try {
-            hostMetrics.getUnchecked(ImmutableServiceAndHost.of(serviceName, hostname)).record(statusCode, micros);
+            hostMetrics.getUnchecked(
+                    ImmutableServiceAndHost.of(serviceName, serviceId, hostname)).record(statusCode, micros);
         } catch (Exception e) {
             log.warn("Unable to record metrics for host", UnsafeArg.of("hostname", hostname));
         }
     }
 
-    void recordIoException(String serviceName, String hostname) {
+    void recordIoException(String serviceName, String serviceId, String hostname) {
         try {
-            hostMetrics.getUnchecked(ImmutableServiceAndHost.of(serviceName, hostname)).recordIoException();
+            hostMetrics.getUnchecked(ImmutableServiceAndHost.of(serviceName, serviceId, hostname)).recordIoException();
         } catch (Exception e) {
             log.warn("Unable to record IO exception for host", UnsafeArg.of("hostname", hostname));
         }
@@ -71,6 +73,7 @@ final class HostMetricsRegistry {
     @ImmutablesStyle
     interface ServiceAndHost {
         @Value.Parameter String serviceName();
+        @Value.Parameter String serviceId();
         @Value.Parameter String hostname();
     }
 }

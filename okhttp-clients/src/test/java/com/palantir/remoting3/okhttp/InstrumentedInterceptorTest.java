@@ -55,7 +55,7 @@ public final class InstrumentedInterceptorTest {
     public void before() {
         registry = new DefaultTaggedMetricRegistry();
         hostMetrics = new HostMetricsRegistry();
-        interceptor = new InstrumentedInterceptor(registry, hostMetrics, "client");
+        interceptor = new InstrumentedInterceptor(registry, hostMetrics, "client", "1234");
     }
 
     @Test
@@ -78,6 +78,7 @@ public final class InstrumentedInterceptorTest {
         MetricName name = MetricName.builder()
                 .safeName(InstrumentedInterceptor.CLIENT_RESPONSE_METRIC_NAME)
                 .putSafeTags(InstrumentedInterceptor.SERVICE_NAME_TAG, "client")
+                .putSafeTags(InstrumentedInterceptor.SERVICE_ID_TAG, "1234")
                 .build();
         Timer timer = registry.timer(name);
 

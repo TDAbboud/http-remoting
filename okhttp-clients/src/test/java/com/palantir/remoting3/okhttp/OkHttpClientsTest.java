@@ -83,6 +83,7 @@ public final class OkHttpClientsTest extends TestBase {
         List<HostMetrics> hostMetrics = OkHttpClients.hostMetrics().stream()
                 .filter(metrics -> metrics.hostname().equals("localhost"))
                 .filter(metrics -> metrics.serviceName().equals("OkHttpClientsTest"))
+                .filter(metrics -> metrics.serviceId().equals("1234"))
                 .collect(Collectors.toList());
         HostMetrics actualMetrics = Iterables.getOnlyElement(hostMetrics);
 
@@ -98,6 +99,7 @@ public final class OkHttpClientsTest extends TestBase {
         List<HostMetrics> hostMetrics = OkHttpClients.hostMetrics().stream()
                 .filter(metrics -> metrics.hostname().equals("bogus"))
                 .filter(metrics -> metrics.serviceName().equals("OkHttpClientsTest"))
+                .filter(metrics -> metrics.serviceId().equals("1234"))
                 .collect(Collectors.toList());
         HostMetrics actualMetrics = Iterables.getOnlyElement(hostMetrics);
 
@@ -595,6 +597,7 @@ public final class OkHttpClientsTest extends TestBase {
                         .from(createTestConfig(urls))
                         .maxNumRetries(maxNumRetries)
                         .backoffSlotSize(backoffSlotSize)
+                        .serviceId("1234")
                         .build(),
                 AGENT,
                 OkHttpClientsTest.class);

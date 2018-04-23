@@ -46,6 +46,9 @@ public interface ClientConfiguration {
     /** See {@link com.palantir.remoting.api.config.service.PartialServiceConfiguration#uris}. */
     List<String> uris();
 
+    /** See {@link com.palantir.remoting.api.config.service.PartialServiceConfiguration#serviceId}. */
+    String serviceId();
+
     /** See {@link com.palantir.remoting.api.config.service.PartialServiceConfiguration#connectTimeout}. */
     Duration connectTimeout();
 

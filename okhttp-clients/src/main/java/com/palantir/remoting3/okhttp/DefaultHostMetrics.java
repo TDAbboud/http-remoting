@@ -31,6 +31,7 @@ final class DefaultHostMetrics implements HostMetrics {
     private static final TimeUnit MICROS = TimeUnit.MICROSECONDS;
 
     private final String serviceName;
+    private final String serviceId;
     private final String hostname;
     private final Timer informational;
     private final Timer successful;
@@ -44,8 +45,9 @@ final class DefaultHostMetrics implements HostMetrics {
     private volatile long lastUpdateEpochMillis;
 
     /** Creates a metrics registry for calls from the given service to the given host. */
-    DefaultHostMetrics(String serviceName, String hostname, Clock clock) {
+    DefaultHostMetrics(String serviceName, String serviceId, String hostname, Clock clock) {
         this.serviceName = serviceName;
+        this.serviceId = serviceId;
         this.hostname = hostname;
         this.informational = new Timer();
         this.successful = new Timer();
@@ -61,6 +63,11 @@ final class DefaultHostMetrics implements HostMetrics {
     @Override
     public String serviceName() {
         return serviceName;
+    }
+
+    @Override
+    public String serviceId() {
+        return serviceId;
     }
 
     @Override

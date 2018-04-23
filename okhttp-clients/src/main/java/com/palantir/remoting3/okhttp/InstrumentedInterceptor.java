@@ -32,14 +32,20 @@ final class InstrumentedInterceptor implements Interceptor {
 
     static final String CLIENT_RESPONSE_METRIC_NAME = "client.response";
     static final String SERVICE_NAME_TAG = "service-name";
+    static final String SERVICE_ID_TAG = "service-id";
 
     private final HostMetricsRegistry hostMetrics;
     private final String serviceName;
+    private final String serviceId;
     private final Timer responseTimer;
 
-    InstrumentedInterceptor(TaggedMetricRegistry registry, HostMetricsRegistry hostMetrics, String serviceName) {
+    InstrumentedInterceptor(TaggedMetricRegistry registry,
+            HostMetricsRegistry hostMetrics,
+            String serviceName,
+            String serviceId) {
         this.hostMetrics = hostMetrics;
         this.serviceName = serviceName;
+        this.serviceId = serviceId;
         this.responseTimer = registry.timer(name());
     }
 
@@ -52,27 +58,31 @@ final class InstrumentedInterceptor implements Interceptor {
         try {
             response = chain.proceed(chain.request());
         } catch (IOException e) {
-            hostMetrics.recordIoException(serviceName, hostname);
+            hostMetrics.recordIoException(serviceName, serviceId, hostname);
             throw e;
         }
 
         long micros = stopwatch.elapsed(TimeUnit.MICROSECONDS);
 
-        hostMetrics.record(serviceName, hostname, response.code(), micros);
+        hostMetrics.record(serviceName, serviceId, hostname, response.code(), micros);
         responseTimer.update(micros, TimeUnit.MICROSECONDS);
 
         return response;
     }
 
     static InstrumentedInterceptor create(
-            TaggedMetricRegistry registry, HostMetricsRegistry hostMetrics, Class<?> serviceClass) {
-        return new InstrumentedInterceptor(registry, hostMetrics, serviceClass.getSimpleName());
+            TaggedMetricRegistry registry,
+            HostMetricsRegistry hostMetrics,
+            Class<?> serviceClass,
+            String serviceId) {
+        return new InstrumentedInterceptor(registry, hostMetrics, serviceClass.getSimpleName(), serviceId);
     }
 
     private MetricName name() {
         return MetricName.builder()
                 .safeName(CLIENT_RESPONSE_METRIC_NAME)
                 .putSafeTags(SERVICE_NAME_TAG, serviceName)
+                .putSafeTags(SERVICE_ID_TAG, serviceId)
                 .build();
     }
 }

@@ -42,6 +42,7 @@ public final class ClientConfigurations {
     private static final Duration DEFAULT_WRITE_TIMEOUT = Duration.ofMinutes(10);
     private static final Duration DEFAULT_BACKOFF_SLOT_SIZE = Duration.ofMillis(250);
     private static final boolean DEFAULT_ENABLE_GCM_CIPHERS = false;
+    private static final String DEFAULT_SERVICE_ID = "";
 
     private ClientConfigurations() {}
 
@@ -54,6 +55,7 @@ public final class ClientConfigurations {
                 .sslSocketFactory(SslSocketFactories.createSslSocketFactory(config.security()))
                 .trustManager(SslSocketFactories.createX509TrustManager(config.security()))
                 .uris(config.uris())
+                .serviceId(config.serviceId().orElse(DEFAULT_SERVICE_ID))
                 .connectTimeout(config.connectTimeout().orElse(DEFAULT_CONNECT_TIMEOUT))
                 .readTimeout(config.readTimeout().orElse(DEFAULT_READ_TIMEOUT))
                 .writeTimeout(config.writeTimeout().orElse(DEFAULT_WRITE_TIMEOUT))
@@ -76,6 +78,7 @@ public final class ClientConfigurations {
                 .sslSocketFactory(sslSocketFactory)
                 .trustManager(trustManager)
                 .uris(uris)
+                .serviceId(DEFAULT_SERVICE_ID)
                 .connectTimeout(DEFAULT_CONNECT_TIMEOUT)
                 .readTimeout(DEFAULT_READ_TIMEOUT)
                 .writeTimeout(DEFAULT_WRITE_TIMEOUT)

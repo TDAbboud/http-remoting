@@ -32,6 +32,11 @@ public interface HostMetrics {
     String serviceName();
 
     /**
+     * The id of the service these metrics describe.
+     */
+    String serviceId();
+
+    /**
      * The name of the host these metrics describe. This may be the hostname, ip, or some other URI.
      */
     String hostname();
